@@ -30,5 +30,4 @@ export const constant_route = [
         redirect: '/404',
         name: 'Any',
     },
-    
 ]

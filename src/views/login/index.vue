@@ -143,8 +143,7 @@ let login_form = reactive({
 
 // 定义表单校验需要的配置对象
 const validator_username = (_, value: any, callback: any) => {
-    const reg_username =
-        /^\w{5,10}$/
+    const reg_username = /^\w{5,10}$/
     // rule即为校验规则对象
     // value即为表单元素的文本内容
     // callback是一个放行函数,即如果条件满足要求直接调用,不满足要求则传入错误信息
@@ -159,7 +158,7 @@ const validator_password = (_, value: any, callback: any) => {
     // rule即为校验规则对象
     // value即为表单元素的文本内容
     // callback是一个放行1函数,即如果条件满足要求直接调用,不满足要求则传入错误信息
-    if (value.length>=6) {
+    if (value.length >= 6) {
         callback()
     } else {
         callback(new Error('密码长度至少6位'))
@@ -174,7 +173,6 @@ const rules = {
     password: [
         { required: true, message: '请输入密码!', trigger: 'blur' },
         { trigger: 'change', validator: validator_password },
-        
     ],
 }
 </script>
