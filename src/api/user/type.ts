@@ -1,4 +1,5 @@
 // 登录接口需要携带参数ts类型
+// interface即ts在vue中的接口
 export interface login_form {
     username: String
     password: String
@@ -30,5 +31,5 @@ interface user {
 }
 export interface user_response_data {
     code: number
-    data:user
+    data: user
 }

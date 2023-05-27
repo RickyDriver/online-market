@@ -3,7 +3,6 @@
 import { UserConfigExport, ConfigEnv } from 'vite'
 import { viteMockServe } from 'vite-plugin-mock'
 
-
 // vite.config.ts
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -11,7 +10,7 @@ import path from 'path'
 // 引入svg图标插件
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 
-export default ((command) => {
+export default (command) => {
     return {
         // scss全局变量的配置项
         css: {
@@ -43,4 +42,4 @@ export default ((command) => {
             },
         },
     }
-})
+}
