@@ -1,7 +1,5 @@
 <style scoped lang="scss">
-div {
-    background-color: skyblue;
-}
+
 </style>
 <template>
     <div>

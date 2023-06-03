@@ -118,7 +118,7 @@ const login = async () => {
     try {
         // 保证登录成功
         await user_store.user_login(login_form)
-        $router.push('/home')
+        $router.push('/')
         ElNotification({
             type: 'success',
             title: get_time(),
