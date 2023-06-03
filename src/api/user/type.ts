@@ -7,7 +7,7 @@ export interface login_form {
 // 登录接口返回数据类型
 interface data_type {
     token?: String
-    message?:string
+    message?: string
 }
 
 export interface login_responce_data {

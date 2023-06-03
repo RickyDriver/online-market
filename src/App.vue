@@ -1,6 +1,4 @@
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>
 <template>
     <div>
         <router-view></router-view>

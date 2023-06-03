@@ -66,10 +66,9 @@
             <el-col :span="18">
                 <!-- 头部导航栏 -->
                 <div class="layout-tabbar">111</div>
-                
+
                 <!-- 主要内容 -->
                 <div class="layout-main">
-                    
                     <el-scrollbar class="slidebar-right">
                         <Main></Main>
                     </el-scrollbar>
