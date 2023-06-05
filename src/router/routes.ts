@@ -124,7 +124,7 @@ export const constant_route = [
         children: [
             {
                 path: '/product/trademark',
-                component: () => import('@/views/product/Trademark/index.vue'),
+                component: () => import('@/views/product/trademark/index.vue'),
                 name: 'Trademark',
                 meta: {
                     title: '商标管理',
