@@ -17,7 +17,7 @@
 </style>
 <template>
     <el-container class="logo" v-if="setting.logo_active">
-        <img :src="setting.logo" alt="" class="img">
+        <img :src="setting.logo" alt="" class="img" />
         <!-- 菜单标题在菜单收起时不展示 -->
         <p v-if="!setting_store.fold">{{ setting.title }}</p>
     </el-container>
@@ -28,8 +28,6 @@
 import setting from '@/setting'
 // 引入layout设置小仓库
 import use_layout_setting_store from '@/store/modules/setting'
-
-
 </script>
 <script lang="ts">
 export default {

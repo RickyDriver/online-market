@@ -9,7 +9,6 @@
                 path="item.path"
                 :index="item.path"
                 @click="go_route"
-                
             >
                 <el-icon>
                     <component :is="item.meta.icon"></component>
