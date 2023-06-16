@@ -60,7 +60,6 @@ const $router = useRouter()
 let props = defineProps(['menu_list'])
 // 点击菜单的回调
 const go_route = function (vc: any) {
-    console.log(vc.index)
     $router.push(vc.index)
 }
 </script>
