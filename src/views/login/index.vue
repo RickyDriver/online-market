@@ -82,7 +82,7 @@
 </template>
 <script setup lang="ts">
 // 引入router
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 // 引入elementplus提示组件
 import { ElNotification } from 'element-plus'
 
@@ -96,8 +96,9 @@ import { get_time } from '@/utils/time'
 
 // 获取用户相关的数据
 let user_store = use_uesr_store()
-// 获取路由器
+// 获取路由器,路由对象
 let $router = useRouter()
+let $route = useRoute()
 // 定义变量控制按钮加载效果
 let loading = ref(false)
 
@@ -118,7 +119,10 @@ const login = async () => {
     try {
         // 保证登录成功
         await user_store.user_login(login_form)
-        $router.push('/')
+        // 判断路径中是否有query参数,如有则重定向跳转query,如无则跳转首页
+        let redirect: any = $route.query.redirect
+        $router.push({ path: redirect || '/' })
+
         ElNotification({
             type: 'success',
             title: get_time(),
@@ -138,7 +142,7 @@ const login = async () => {
 // 默认登录的账号密码,会被input输入的值覆盖
 let login_form = reactive({
     username: 'admin',
-    password: '111111',
+    password: 'atguigu123',
 })
 
 // 定义表单校验需要的配置对象

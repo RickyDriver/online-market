@@ -3,7 +3,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { constant_route } from './routes'
 
-let router = createRouter({
+const router = createRouter({
     // 路由模式hash模式
     history: createWebHashHistory(),
     routes: constant_route,

@@ -4,6 +4,10 @@ import { Expand } from '@element-plus/icons-vue/dist/types';
 .icon {
     margin-left: 10px;
     margin-right: 10px;
+    cursor: pointer;
+}
+.icon-title {
+    line-height: $tabbar-height;
 }
 </style>
 
@@ -16,19 +20,31 @@ import { Expand } from '@element-plus/icons-vue/dist/types';
 
     <!-- 左侧面包屑 -->
     <el-breadcrumb separator-icon="ArrowRight">
-        <el-breadcrumb-item>权限管理</el-breadcrumb-item>
-        <el-breadcrumb-item>用户管理</el-breadcrumb-item>
+        <!-- 使用路由的match属性来生成面包屑 -->
+        <el-breadcrumb-item
+            v-for="(item, index) in $route.matched"
+            :key="index"
+            v-show="item.meta.title"
+            :to="item.path"
+        >
+            <div class="icon-title">
+                <el-icon size="10px">
+                    <component :is="item.meta.icon"></component>
+                </el-icon>
+                {{ item.meta.title }}
+            </div>
+        </el-breadcrumb-item>
     </el-breadcrumb>
 </template>
 
 <script setup lang="ts">
-// import { ref } from 'vue'
 // 引入layout设置小仓库
 import use_layout_setting_store from '@/store/modules/setting'
-
+// 引入路由方法
+import { useRoute } from 'vue-router'
+let $route = useRoute()
 // 动态变量决定是否折叠
 let setting_store = use_layout_setting_store()
-console.log(setting_store)
 
 let change_icon = function () {
     setting_store.fold = !setting_store.fold

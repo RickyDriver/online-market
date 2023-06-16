@@ -21,6 +21,9 @@ import router from './router'
 // 引入pinia仓库
 import pinia from '@/store'
 
+// 引入路由鉴权文件
+import './permission'
+
 createApp(App)
 
 const app = createApp(App)

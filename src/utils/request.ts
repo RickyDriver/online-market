@@ -1,12 +1,19 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
+import use_user_store from '@/store/modules/user'
+
 //创建axios实例
-let request = axios.create({
+const request = axios.create({
     baseURL: import.meta.env.VITE_APP_BASE_API,
     timeout: 5000,
 })
 //请求拦截器
 request.interceptors.request.use((config) => {
+    // 拦截操作1,将所有的请求都带上用户的token
+    let user_store = use_user_store()
+    if (user_store.token) {
+        config.headers.token = user_store.token
+    }
     return config
 })
 //响应拦截器

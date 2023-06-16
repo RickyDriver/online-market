@@ -1,36 +1,26 @@
-// 登录接口需要携带参数ts类型
-// interface即ts在vue中的接口
-export interface login_form {
-    username: String
-    password: String
-}
-// 登录接口返回数据类型
-interface data_type {
-    token?: String
-    message?: string
+export interface login_form_data {
+    username: string
+    password: string
 }
 
-export interface login_responce_data {
+// 定义全部接口返回数据都拥有的ts类型
+export interface response_data {
     code: number
-    data: data_type
+    message: string
+    ok: boolean
+}
+// 定义登录接口返回的数据的类型
+export interface login_response_data extends response_data {
+    data: string
 }
 
-// 定义服务器返回用户信息相关的数据类型
-interface user_info {
-    userId: number
-    avatar: String
-    username: String
-    password: String
-    desc: String
-    roles: String[]
-    buttons: String[]
-    routes: String[]
-    token: String
-}
-interface user {
-    checkUser: user_info
-}
-export interface user_response_data {
-    code: number
-    data: user
+// 定义获取用户信息返回的数据的类型
+export interface user_info_response_data extends response_data {
+    data: {
+        name: string
+        routes: string[]
+        bottons: string[]
+        roles: string[]
+        avatar: string
+    }
 }

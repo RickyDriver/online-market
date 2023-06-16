@@ -77,17 +77,8 @@ export const constant_route = [
             hidden: false,
             icon: 'Lock',
         },
+        redirect: '/acl/users',
         children: [
-            {
-                path: '/acl/role',
-                component: () => import('@/views/acl/role/index.vue'),
-                name: 'Role',
-                meta: {
-                    title: '角色管理',
-                    hidden: false,
-                    icon: 'User',
-                },
-            },
             {
                 path: '/acl/users',
                 component: () => import('@/views/acl/users/index.vue'),
@@ -98,6 +89,17 @@ export const constant_route = [
                     icon: 'UserFilled',
                 },
             },
+            {
+                path: '/acl/role',
+                component: () => import('@/views/acl/role/index.vue'),
+                name: 'Role',
+                meta: {
+                    title: '角色管理',
+                    hidden: false,
+                    icon: 'User',
+                },
+            },
+
             {
                 path: '/acl/permission',
                 component: () => import('@/views/acl/permission/index.vue'),
