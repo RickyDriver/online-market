@@ -23,5 +23,3 @@ export const api_req_userInfo = () =>
     request.get<any, user_info_response_data>(API.USER_INFO_URL)
 // 退出登录接口
 export const api_req_logout = () => request.post<any, any>(API.LOGOUT_URL)
-
-// export { api_req_login, api_req_userInfo, api_req_logout }
