@@ -123,6 +123,7 @@ export const constant_route = [
             hidden: false,
             icon: 'Goods',
         },
+        redirect: '/product/trademark',
         children: [
             {
                 path: '/product/trademark',
