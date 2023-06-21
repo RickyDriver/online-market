@@ -68,14 +68,22 @@
                         >
                             修改
                         </el-button>
-                        <el-button
-                            type="primary"
-                            size="small"
+                        <el-popconfirm
+                            :title="`您确认要删除${row.tmName}吗`"
+                            width="200px"
                             icon="Delete"
-                            @click="delete_trademark(row)"
+                            @confirm="delete_trademark(row.id)"
                         >
-                            删除
-                        </el-button>
+                            <template #reference>
+                                <el-button
+                                    type="primary"
+                                    size="small"
+                                    icon="Delete"
+                                >
+                                    删除
+                                </el-button>
+                            </template>
+                        </el-popconfirm>
                     </template>
                 </el-table-column>
             </el-table>
@@ -105,11 +113,16 @@
                 width="600px"
                 v-model="dialog_form_visible"
             >
-                <el-form ref="form" style="width: 80%">
+                <el-form
+                    style="width: 80%"
+                    :rules="rules"
+                    :model="trademark_parmas"
+                    ref="form_ref"
+                >
                     <el-form-item
                         label="品牌名称:"
-                        prop="name"
                         label-width="100px"
+                        prop="tmName"
                     >
                         <el-input
                             placeholder="请输入品牌名称"
@@ -119,7 +132,7 @@
 
                     <el-form-item
                         label="品牌LOGO:"
-                        prop="name"
+                        prop="logoUrl"
                         label-width="100px"
                     >
                         <el-upload
@@ -150,28 +163,13 @@
                     <el-button type="primary" @click="comfirm">确定</el-button>
                 </template>
             </el-dialog>
-
-            <el-dialog
-                title="是否确认删除此条目?"
-                width="600px"
-                v-model="delete_form_visible"
-            >
-                <template #footer>
-                    <el-button type="primary" @click="cancle_delete">
-                        取消
-                    </el-button>
-                    <el-button type="primary" @click="comfirm_delete">
-                        确定
-                    </el-button>
-                </template>
-            </el-dialog>
         </el-card>
     </div>
 </template>
 
 <script setup lang="ts">
 import { ElMessage } from 'element-plus'
-import { ref, onMounted, watch, reactive } from 'vue'
+import { ref, onMounted, watch, reactive, nextTick } from 'vue'
 // 导入请求商标列表的函数
 import {
     api_has_trademark,
@@ -239,6 +237,43 @@ let trademark_parmas = reactive<trademark>({
     tmName: '',
 })
 let delete_id = ref(0)
+
+// 表单校验的规则对象
+
+// 获取el-form组件的实例
+let form_ref = ref()
+// 自定义验证方法
+const validatorTmName = (rule: any, value: any, callBack: any) => {
+    //是当表单元素触发blur时候,会触发此方法
+    //自定义校验规则
+    if (value.trim().length >= 2) {
+        callBack()
+    } else {
+        //校验未通过返回的错误的提示信息
+        callBack(new Error('品牌名称位数大于等于两位'))
+    }
+}
+
+const validatorLogoUrl = (rule: any, value: any, callback: any) => {
+    if (value) {
+        callback()
+    } else {
+        callback(new Error('logo的图片必须上传'))
+    }
+}
+const rules = {
+    tmName: [
+        //
+        { required: true, trigger: 'blur', validator: validatorTmName },
+    ],
+    logoUrl: [
+        {
+            required: true,
+            validator: validatorLogoUrl,
+        },
+    ],
+}
+
 // 限制用户上传文件的格式和大小,此钩子在图片上传成功之前触发
 const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
     if (
@@ -263,26 +298,53 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
 const handleAvatarSuccess: UploadProps['onSuccess'] = (response) => {
     // 两个回调函数,response即为此次上传图片返回的数据,
     trademark_parmas.logoUrl = response.data
+    // 图片上传成功,清除对应的图片校验的结果
+    form_ref.value.clearValidate()
 }
 // 控制对话框的显示与隐藏
 let dialog_form_visible = ref<boolean>(false)
 let delete_form_visible = ref<boolean>(false)
-// 按钮的点击事件
+
+// 添加品牌,删除品牌,升级品牌的点击事件
 const update_trademark = async () => {
     dialog_title.value = '添加品牌'
     dialog_form_visible.value = true
-    await get_has_trademark()
+    //清空收集数据
+    trademark_parmas.id = 0
+    trademark_parmas.tmName = ''
+    trademark_parmas.logoUrl = ''
+    // nexttick方法,在页面的dom修改完成后再触发里面的函数
+    nextTick(() => form_ref.value.clearValidate())
 }
 const change_trademark = (row) => {
     dialog_title.value = '修改品牌'
-    trademark_parmas.id = row.id
     dialog_form_visible.value = true
-    //TODO 需要新增刷新模块的功能
+    nextTick(() => form_ref.value.clearValidate())
+    // 使用object.assign方法来合并对象,也就是可以动态地更新文本框及图片框里的内容
+    Object.assign(trademark_parmas, row)
 }
 
-const delete_trademark = (row) => {
-    delete_form_visible.value = true
-    delete_id.value = row.id
+// 气泡确认框确认按钮的回调
+const delete_trademark = async (id: number) => {
+    console.log(id)
+    let res = await api_delete_trademark(id)
+    if (res.code == 200) {
+        // 删除成功的提示信息
+        ElMessage({
+            type: 'success',
+            message: '删除品牌成功',
+        })
+        get_has_trademark(
+            trademark_arr.value.length > 1
+                ? page_num.value
+                : page_num.value - 1,
+        )
+    } else {
+        ElMessage({
+            type: 'error',
+            message: '删除品牌失败',
+        })
+    }
 }
 /*
 
@@ -296,6 +358,9 @@ const delete_trademark = (row) => {
 
 */
 const comfirm = async () => {
+    // 在发请求之前对整个表单的内容进行校验,等待校验通过之后再发送请求
+    await form_ref.value.validate()
+    // 等待请求结果
     await api_update_add_trademark(trademark_parmas)
     dialog_form_visible.value = false
     page_num.value = 1
@@ -303,12 +368,7 @@ const comfirm = async () => {
     trademark_parmas.logoUrl = ''
     trademark_parmas.tmName = ''
 }
-const comfirm_delete = async () => {
-    await api_delete_trademark(delete_id.value)
-    delete_form_visible.value = false
-    page_num.value = 1
-    await get_has_trademark()
-}
+
 const cancle = () => {
     trademark_parmas.logoUrl = ''
     trademark_parmas.tmName = ''
