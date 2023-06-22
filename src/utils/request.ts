@@ -10,7 +10,7 @@ const request = axios.create({
 //请求拦截器
 request.interceptors.request.use((config) => {
     // 拦截操作1,将所有的请求都带上用户的token
-    let user_store = use_user_store()
+    const user_store = use_user_store()
     if (user_store.token) {
         config.headers.token = user_store.token
     }
