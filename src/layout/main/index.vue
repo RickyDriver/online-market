@@ -10,11 +10,13 @@
 }
 </style>
 <template>
-    <router-view v-slot="{ Component }">
-        <transition name="fade">
-            <component :is="Component" v-if="flag" />
-        </transition>
-    </router-view>
+    <div style="padding: 20px">
+        <router-view v-slot="{ Component }">
+            <transition name="fade">
+                <component :is="Component" v-if="flag" />
+            </transition>
+        </router-view>
+    </div>
 </template>
 <script lang="ts">
 export default {

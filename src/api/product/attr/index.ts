@@ -1,6 +1,6 @@
 // 书写属性相关扥而api文件
 import request from '@/utils/request'
-import type { catagory_res_data, attr_res } from './type'
+import type { catagory_res_data, attr_res, attr_data } from './type'
 
 enum API {
     // 一到三级路由的接口url
@@ -12,6 +12,8 @@ enum API {
     ATTR_LIST = '/admin/product/attrInfoList',
     // 添加或者修改已有属性的接口
     ADD_OR_UPDATE_ATTR_URL = '/admin/product/saveAttrInfo',
+    // 删除已有属性
+    DELETE_ATTR = '/admin/product/deleteAttr',
 }
 // 获取一二三级分类的接口方法
 export const api_get_c1url = () => {
@@ -35,6 +37,10 @@ export const api_get_attr_list = (
     )
 }
 // 新增或者修改三级分类下的属性
-export const api_add_or_update_attr = (header: single_attr_value) => {
+export const api_add_or_update_attr = (header: attr_data) => {
     return request.post<any, any>(API.ADD_OR_UPDATE_ATTR_URL, header)
+}
+// 删除三级分类下的属性
+export const api_delete_attr = (data: number) => {
+    return request.delete<any, any>(API.DELETE_ATTR + `/${data}`)
 }

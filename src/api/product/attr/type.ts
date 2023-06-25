@@ -23,6 +23,7 @@ export interface single_attr_value {
     attrId?: number | string
     createTime?: string
     updateTime?: string
+    edit_tolook?: boolean
 }
 // 02 单个属性data的类型
 export interface attr_data {
