@@ -11,6 +11,12 @@ enum API {
     ALLSALEATTR_URL = '/admin/product/baseSaleAttrList',
     //获取全部品牌的数据
     ALLTRADEMARK_URL = '/admin/product/baseTrademark/getTrademarkList',
+    // 修改spu属性
+    UPDATE_SPU_ATTR = '/admin/product/updateSpuInfo',
+    // 新增spu属性
+    ADD_SPU_ATTR = '/admin/product/saveSpuInfo',
+    // 删除spu属性
+    DELETE_SPU = '/admin/product/deleteSpu',
 }
 
 // 获取已有的spu数据
@@ -41,4 +47,19 @@ export const api_get_trademark = () => {
 // 请求4:获取所有的销售属性
 export const api_get_sale_attr = () => {
     return request.get<any, any>(API.ALLSALEATTR_URL)
+}
+
+// 修改请求1:修改已有的spu品牌数据
+// 如果请求头有id则启用修改接口,反之启用新增接口
+export const api_update_spu_attr = (parmas) => {
+    if (parmas.id) {
+        return request.post<any, any>(API.UPDATE_SPU_ATTR, parmas)
+    } else {
+        return request.post<any, any>(API.ADD_SPU_ATTR, parmas)
+    }
+}
+
+// 修改请求2:根据spuid(id)删除对应的spu
+export const api_delete_spu = (spuid: number) => {
+    return request.delete<any, any>(API.DELETE_SPU + `/${spuid}`)
 }

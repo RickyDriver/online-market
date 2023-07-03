@@ -31,11 +31,12 @@
                     prop="description"
                 ></el-table-column>
                 <el-table-column label="spu操作">
-                    <template v-slot="{ row, $index }">
+                    <template v-slot="{ row }">
                         <el-button
                             type="primary"
                             icon="Plus"
                             size="small"
+                            @click="add_sku"
                         ></el-button>
                         <el-button
                             type="primary"
@@ -52,6 +53,7 @@
                             type="primary"
                             icon="Delete"
                             size="small"
+                            @click="delete_spu(row)"
                         ></el-button>
                     </template>
                 </el-table-column>
@@ -67,7 +69,12 @@
             />
         </el-card>
 
-        <spu_form v-show="scene === 1" @switch_number="to_page0"></spu_form>
+        <spu_form
+            v-show="scene === 1"
+            @switch_number="to_page0"
+            :reflesh="get_has_spu_list"
+        ></spu_form>
+        <update_sku v-show="scene === 2" @cancel="cancel_add_spu"></update_sku>
     </div>
 </template>
 
@@ -82,12 +89,14 @@ const catagory_store = use_catagory_store()
 import use_spu_store from '@/store/modules/spu'
 const spu_store = use_spu_store()
 // 引入api接口
-import { api_get_has_spu_list } from '@/api/product/spu'
+import { api_get_has_spu_list, api_delete_spu } from '@/api/product/spu'
 // 引入ts数据类型
 import type { spu_res_data_data, single_spu_data } from '@/api/product/spu/type'
 
 // 引入新增spu,sku的页面组件
 import spu_form from './update_spu.vue'
+import update_sku from './update_sku.vue'
+import { ElMessage } from 'element-plus'
 // 定义切换页面显示的状态码,显示为1则切换到新增spu页面,显示为0返回数据展示页
 let scene = ref(0)
 // 定义自定义事件触发返回0
@@ -99,11 +108,42 @@ const edit_spu = async (row: single_spu_data) => {
     scene.value = 1
     spu_store.get_spu_info(row.id)
     spu_store.find_spu_has_trmark(row.category3Id)
+    spu_store.get_sale_attr()
+    spu_store.get_trmark()
     spu_store.spu_parmas = row
 }
-
-const add_spu = () => (scene.value = 1)
-
+// 添加spu按钮事件
+const add_spu = () => {
+    scene.value = 1
+    spu_store.spu_parmas = {
+        category3Id: catagory_store.c3_id,
+        description: '',
+        spuImageList: [],
+        spuName: '',
+        spuPosterList: [],
+        spuSaleAttrList: [],
+    }
+    spu_store.spu_trmark_arr = []
+    spu_store.spu_sale_attr_arr = []
+    spu_store.upload_filelist = []
+    spu_store.spu_img_list = []
+}
+// 删除spu
+const delete_spu = async (row) => {
+    let res = await api_delete_spu(row.id)
+    if (res.code == 200) {
+        ElMessage({
+            type: 'success',
+            message: '删除成功',
+        })
+        get_has_spu_list()
+    } else {
+        ElMessage({
+            type: 'error',
+            message: '删除失败',
+        })
+    }
+}
 // 定义分页器的页码
 let page_num = ref<number>(1)
 let limit = ref<number>(3)
@@ -112,15 +152,16 @@ let total = ref<number>(0)
 // 封装请求函数
 //当仓库中的c3_id发生变化的时候,发送请求拿数据
 let spu_data_arr = ref<spu_res_data_data>([] as any)
-let get_has_spu_list = async () => {
+let get_has_spu_list = async (page?: number) => {
+    if (page) page_num.value = page
     let res = await api_get_has_spu_list(
         page_num.value,
         limit.value,
         catagory_store.c3_id,
     )
     spu_data_arr.value = res.data
+    console.log(res.data)
     total.value = spu_data_arr.value.total
-    console.log(spu_data_arr.value)
 }
 // 一进入页面,就发一次请求初始化页面
 onMounted(() => {
@@ -147,6 +188,14 @@ watch(
     () => limit.value,
     () => get_has_spu_list(),
 )
+
+// 点击进入新增sku页面
+const add_sku = () => {
+    scene.value = 2
+}
+const cancel_add_spu = (num) => {
+    scene.value = num
+}
 </script>
 
 <style lang="stylus" scoped></style>
