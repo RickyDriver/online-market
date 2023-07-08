@@ -29,7 +29,7 @@ createApp(App)
 const app = createApp(App)
 // 安装element-plus插件
 app.use(ElementPlus, {
-    locale: zhCn, //elementplus国际化设置
+  locale: zhCn, //elementplus国际化设置
 })
 
 app.use(global_component)

@@ -13,45 +13,45 @@ const user_store = use_user_store(pinia)
 
 // 全局前置守卫:项目中任意路由切换都会触发的钩子
 router.beforeEach(async (to: any, from: any, next: any) => {
-    document.title = `${setting.title} - ${to.meta.title}`
-    // 访问某一个路由之前的守卫
-    // to:将要访问哪个路由
-    // from:从哪个路由而来
-    // next:路由的放行函数
-    nprogress.start()
-    const token = user_store.token
-    const user_name = user_store.user_name
-    // 用户登录判断
-    if (token) {
-        // 登陆成功判断
-        if (to.path == '/login') {
-            next({ path: '/' })
-        } else {
-            if (user_name) {
-                next()
-            } else {
-                // 如果没有用户信息,在守卫处发请求获取用户信息
-                try {
-                    await user_store.user_info()
-                    next()
-                } catch (err) {
-                    // token过期或者用户手动地修改了本地的token
-                    await user_store.user_logout()
-                    next({ path: '/login', query: { redirect: to.path } })
-                }
-            }
-        }
+  document.title = `${setting.title} - ${to.meta.title}`
+  // 访问某一个路由之前的守卫
+  // to:将要访问哪个路由
+  // from:从哪个路由而来
+  // next:路由的放行函数
+  nprogress.start()
+  const token = user_store.token
+  const user_name = user_store.user_name
+  // 用户登录判断
+  if (token) {
+    // 登陆成功判断
+    if (to.path == '/login') {
+      next({ path: '/' })
     } else {
-        // 用户未登录判断
-        if (to.path == '/login') next()
-        else {
-            next({ path: '/login', query: { redirect: to.path } })
+      if (user_name) {
+        next()
+      } else {
+        // 如果没有用户信息,在守卫处发请求获取用户信息
+        try {
+          await user_store.user_info()
+          next()
+        } catch (err) {
+          // token过期或者用户手动地修改了本地的token
+          await user_store.user_logout()
+          next({ path: '/login', query: { redirect: to.path } })
         }
+      }
     }
+  } else {
+    // 用户未登录判断
+    if (to.path == '/login') next()
+    else {
+      next({ path: '/login', query: { redirect: to.path } })
+    }
+  }
 })
 // 全局后置守卫
 router.afterEach((to: any, from: any) => {
-    nprogress.done()
+  nprogress.done()
 })
 
 // 问题1:任意路由切换实现进度条业务

@@ -3,45 +3,45 @@ import { Expand } from '@element-plus/icons-vue/dist/types';
 <style lang="scss" scoped></style>
 
 <template>
-    <!-- 顶部右侧 -->
-    <!-- 右侧按钮-->
-    <el-button
-        size="small"
-        icon="Refresh"
-        :circle="true"
-        @click="update_refsh"
-    ></el-button>
-    <el-button
-        size="small"
-        icon="FullScreen"
-        :circle="true"
-        @click="full_screen"
-    ></el-button>
-    <el-button size="small" icon="Setting" :circle="true"></el-button>
-    <el-avatar
-        size="small"
-        :src="user_store.user_avatar_url"
-        class="avatar"
-    ></el-avatar>
+  <!-- 顶部右侧 -->
+  <!-- 右侧按钮-->
+  <el-button
+    size="small"
+    icon="Refresh"
+    :circle="true"
+    @click="update_refsh"
+  ></el-button>
+  <el-button
+    size="small"
+    icon="FullScreen"
+    :circle="true"
+    @click="full_screen"
+  ></el-button>
+  <el-button size="small" icon="Setting" :circle="true"></el-button>
+  <el-avatar
+    size="small"
+    :src="user_store.user_avatar_url"
+    class="avatar"
+  ></el-avatar>
 
-    <!-- 下拉菜单 -->
-    <el-dropdown>
-        <span class="el-dropdown-link">
-            {{ user_store.user_name }}
-            <el-icon class="el-icon--right">
-                <arrow-down />
-            </el-icon>
-        </span>
-        <template #dropdown>
-            <el-dropdown-menu>
-                <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
-            </el-dropdown-menu>
-        </template>
-    </el-dropdown>
+  <!-- 下拉菜单 -->
+  <el-dropdown>
+    <span class="el-dropdown-link">
+      {{ user_store.user_name }}
+      <el-icon class="el-icon--right">
+        <arrow-down />
+      </el-icon>
+    </span>
+    <template #dropdown>
+      <el-dropdown-menu>
+        <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
+      </el-dropdown-menu>
+    </template>
+  </el-dropdown>
 </template>
 <script lang="ts">
 export default {
-    name: 'Setting',
+  name: 'Setting',
 }
 </script>
 <script lang="ts" setup>
@@ -61,22 +61,22 @@ let $route = useRoute()
 
 // 刷新按钮的方法
 const update_refsh = () => {
-    setting_store.refsh = !setting_store.refsh
+  setting_store.refsh = !setting_store.refsh
 }
 
 // 全屏按钮的方法
 const full_screen = () => {
-    let full = document.fullscreenElement
-    if (!full) {
-        // 利用文档的根节点的方法,实现全屏模式
-        document.documentElement.requestFullscreen()
-    } else {
-        document.exitFullscreen()
-    }
+  let full = document.fullscreenElement
+  if (!full) {
+    // 利用文档的根节点的方法,实现全屏模式
+    document.documentElement.requestFullscreen()
+  } else {
+    document.exitFullscreen()
+  }
 }
 // 退出登录按钮的方法
 const logout = async () => {
-    await user_store.user_logout()
-    $router.push({ path: '/login', query: { redirect: $route.path } })
+  await user_store.user_logout()
+  $router.push({ path: '/login', query: { redirect: $route.path } })
 }
 </script>
