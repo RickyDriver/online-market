@@ -5,5 +5,5 @@
     "htmlWhitespaceSensitivity": "ignore",
     "endOfLine": "auto",
     "trailingComma": "all",
-    "tabWidth": 4
+    "tabWidth": 2
 }

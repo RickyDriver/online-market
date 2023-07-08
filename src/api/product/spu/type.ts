@@ -8,16 +8,16 @@ export interface request_data_header {
 // 单个spu属性的接口
 export interface single_spu_data {
     //TODO需要修改
-    id: number
+    id?: number
     createTime?: string
     updateTime?: string
     spuName: string
     description: string
-    category3Id: number
-    tmId: number
-    spuSaleAttrList: null
-    spuImageList: null
-    spuPosterList: null
+    category3Id: number | string
+    tmId?: number
+    spuSaleAttrList: spuSaleAttrList | null
+    spuImageList: spuImageList | null
+    spuPosterList: spuImageList | null
 }
 
 // spu列表data的数据类型->包括单个spu属性的接口,响应头
@@ -48,29 +48,29 @@ export interface get_spu_info_res extends request_data_header {
         description: string
         category3Id: number
         tmId: number
-        spuSaleAttrList: spuSaleAttrList
-        spuImageList: spuImageList
-        spuPosterList: spuImageList
+        spuSaleAttrList: spuSaleAttrList | null
+        spuImageList: spuImageList | null
+        spuPosterList: spuImageList | null
     }
 }
 // 销售属性列表
 export type spuSaleAttrList = spuSaleAttrList_item[]
 export interface spuSaleAttrList_item {
     id?: number
-    createTime: string
-    updateTime: string
-    spuId: string
-    baseSaleAttrId: number
+    createTime?: string
+    updateTime?: string
+    spuId?: string | number
+    baseSaleAttrId: number | string
     saleAttrName: string
-    spuSaleAttrValueList?: spuSaleAttrList[]
+    spuSaleAttrValueList?: any[]
 }
 // spu图片列表
 export type spuImageList = spuImageList_item[]
 export interface spuImageList_item {
     id?: number
-    createTime: string
-    updateTime: string
-    spuId: string
+    createTime?: string
+    updateTime?: string
+    spuId?: string | number
     imgName: string
     imgUrl: string
 }

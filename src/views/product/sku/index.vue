@@ -1,5 +1,7 @@
 <template>
-    <div>
-        <h1>sku管理</h1>
-    </div>
+  <div>init</div>
 </template>
+
+<script lang="ts" setup></script>
+
+<style lang="scss" scoped></style>

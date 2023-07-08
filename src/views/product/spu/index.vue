@@ -36,7 +36,7 @@
                             type="primary"
                             icon="Plus"
                             size="small"
-                            @click="add_sku"
+                            @click="add_sku(row)"
                         ></el-button>
                         <el-button
                             type="primary"
@@ -48,6 +48,7 @@
                             type="primary"
                             icon="View"
                             size="small"
+                            @click="view_sku_list(row)"
                         ></el-button>
                         <el-button
                             type="primary"
@@ -63,7 +64,7 @@
                 v-model:current-page="page_num"
                 v-model:page-size="limit"
                 :page-sizes="[3, 5, 7, 9]"
-                background="true"
+                :background="true"
                 layout="prev, pager, next, jumper,->,sizes,total"
                 :total="total"
             />
@@ -74,7 +75,41 @@
             @switch_number="to_page0"
             :reflesh="get_has_spu_list"
         ></spu_form>
-        <update_sku v-show="scene === 2" @cancel="cancel_add_spu"></update_sku>
+        <update_sku
+            v-show="scene === 2"
+            @cancel="cancel_add_spu"
+            @init="init_handler"
+        ></update_sku>
+
+        <!-- 展示已有的sku列表界面 -->
+        <el-dialog v-model="toggle_dialog">
+            <el-table :data="sku_list" :border="true" rowKey="id">
+                <el-table-column
+                    type="index"
+                    label="序号"
+                    width="100"
+                ></el-table-column>
+                <el-table-column
+                    label="SKU名字"
+                    prop="skuName"
+                ></el-table-column>
+                <el-table-column label="SKU图片">
+                    <template v-slot="{ row }">
+                        <img :src="row.skuDefaultImg" style="width: 100px" />
+                    </template>
+                </el-table-column>
+                <el-table-column
+                    label="SKU价格"
+                    width="100"
+                    prop="price"
+                ></el-table-column>
+                <el-table-column
+                    label="SKU重量(克)"
+                    width="100"
+                    prop="weight"
+                ></el-table-column>
+            </el-table>
+        </el-dialog>
     </div>
 </template>
 
@@ -89,7 +124,11 @@ const catagory_store = use_catagory_store()
 import use_spu_store from '@/store/modules/spu'
 const spu_store = use_spu_store()
 // 引入api接口
-import { api_get_has_spu_list, api_delete_spu } from '@/api/product/spu'
+import {
+    api_get_has_spu_list,
+    api_delete_spu,
+    api_spu_info,
+} from '@/api/product/spu'
 // 引入ts数据类型
 import type { spu_res_data_data, single_spu_data } from '@/api/product/spu/type'
 
@@ -99,15 +138,21 @@ import update_sku from './update_sku.vue'
 import { ElMessage } from 'element-plus'
 // 定义切换页面显示的状态码,显示为1则切换到新增spu页面,显示为0返回数据展示页
 let scene = ref(0)
+// 接受自定义事件
+let init_fn
+let init_handler = (init) => {
+    init_fn = init
+}
+
 // 定义自定义事件触发返回0
 const to_page0 = (number: number) => {
     scene.value = number
 }
 // 修改spu事件
-const edit_spu = async (row: single_spu_data) => {
+const edit_spu = (row: single_spu_data) => {
     scene.value = 1
-    spu_store.get_spu_info(row.id)
-    spu_store.find_spu_has_trmark(row.category3Id)
+    spu_store.get_spu_info(row.id as number)
+    spu_store.find_spu_has_trmark(row.category3Id as number)
     spu_store.get_sale_attr()
     spu_store.get_trmark()
     spu_store.spu_parmas = row
@@ -115,6 +160,10 @@ const edit_spu = async (row: single_spu_data) => {
 // 添加spu按钮事件
 const add_spu = () => {
     scene.value = 1
+    spu_store.$reset()
+    spu_store.get_sale_attr()
+    spu_store.get_trmark()
+    // 初始化仓库中的表单值
     spu_store.spu_parmas = {
         category3Id: catagory_store.c3_id,
         description: '',
@@ -123,10 +172,10 @@ const add_spu = () => {
         spuPosterList: [],
         spuSaleAttrList: [],
     }
-    spu_store.spu_trmark_arr = []
-    spu_store.spu_sale_attr_arr = []
-    spu_store.upload_filelist = []
-    spu_store.spu_img_list = []
+    // spu_store.spu_trmark_arr = []
+    // spu_store.spu_sale_attr_arr = []
+    // spu_store.upload_filelist = []
+    // spu_store.spu_img_list = []
 }
 // 删除spu
 const delete_spu = async (row) => {
@@ -160,7 +209,6 @@ let get_has_spu_list = async (page?: number) => {
         catagory_store.c3_id,
     )
     spu_data_arr.value = res.data
-    console.log(res.data)
     total.value = spu_data_arr.value.total
 }
 // 一进入页面,就发一次请求初始化页面
@@ -190,11 +238,26 @@ watch(
 )
 
 // 点击进入新增sku页面
-const add_sku = () => {
+const add_sku = (row) => {
     scene.value = 2
+    init_fn(catagory_store.c1_id, catagory_store.c2_id, row)
 }
 const cancel_add_spu = (num) => {
     scene.value = num
+}
+// 展示所有的sku页面
+// 接受请求的sku
+const sku_list = ref()
+// 控制是否开关sku列表对话框
+let toggle_dialog = ref(false)
+const view_sku_list = async (row) => {
+    try {
+        let res = await api_spu_info(row.id)
+        sku_list.value = res.data
+        toggle_dialog.value = true
+    } catch (err) {
+        console.log(err)
+    }
 }
 </script>
 

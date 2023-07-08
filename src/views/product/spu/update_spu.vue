@@ -98,7 +98,6 @@
                                     ) in row.spuSaleAttrValueList"
                                     :key="tag.name"
                                     closable
-                                    type="primary"
                                     @close="del_attr_value(row, index)"
                                     style="margin-right: 5px"
                                 >
@@ -222,7 +221,6 @@ const input_blur = (row) => {
     })
     row.input_attr_value = ''
 
-    console.log(row)
     row.edit = false
 }
 
@@ -250,13 +248,11 @@ let not_selected_arr = computed(() => {
 let selected_value = ref('')
 // 将已选择的属性添加进table表格里面
 const select_attr = () => {
-    console.log(selected_value.value)
     const [baseSaleAttrId, saleAttrName] = selected_value.value.split(':')
     //准备一个新的销售属性对象:将来带给服务器即可
     let newSaleAttr = {
         baseSaleAttrId,
         saleAttrName,
-        spuSaleAttrValueList: [],
     }
     //追加到数组当中
     spu_store.spu_sale_attr_arr.push(newSaleAttr)
