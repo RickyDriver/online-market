@@ -1,6 +1,5 @@
 <style scoped></style>
 <template>
-  <!-- <p>{{ props }}</p> -->
   <template v-for="item in props.menu_list" :key="item.path">
     <!-- 先将所有的父级路由渲染出来 -->
     <template v-if="!item.children">

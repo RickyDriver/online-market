@@ -214,7 +214,6 @@ let trademark_parmas = reactive<trademark>({
   logoUrl: '',
   tmName: '',
 })
-let delete_id = ref(0)
 
 // 表单校验的规则对象
 
@@ -281,7 +280,6 @@ const handleAvatarSuccess: UploadProps['onSuccess'] = (response) => {
 }
 // 控制对话框的显示与隐藏
 let dialog_form_visible = ref<boolean>(false)
-let delete_form_visible = ref<boolean>(false)
 
 // 添加品牌,删除品牌,升级品牌的点击事件
 const update_trademark = async () => {
@@ -350,11 +348,6 @@ const cancle = () => {
   trademark_parmas.tmName = ''
   dialog_form_visible.value = false
 }
-const cancle_delete = () => {
-  delete_id.value = 0
-  delete_form_visible.value = false
-}
-
 /*
 
 卡片table行部分结束

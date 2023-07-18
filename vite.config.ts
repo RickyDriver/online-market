@@ -11,7 +11,7 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 export default defineConfig(({ command, mode }) => {
   // 根据开发环境的不同切换对应的接口配置变量
   // loadenv,参数1:告诉loadenv要用什么模式,参数2:告诉lodeenv模式的文件在哪里
-  let env = loadEnv(mode, process.cwd())
+  const env = loadEnv(mode, process.cwd())
   return {
     plugins: [
       vue(),
