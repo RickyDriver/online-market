@@ -41,7 +41,12 @@
 
       <el-table-column label="操作" fixed="right" width="300">
         <template v-slot="{ row }">
-          <el-button type="primary" @click="" icon="User" size="small">
+          <el-button
+            type="primary"
+            @click="assign_role_menu(row)"
+            icon="User"
+            size="small"
+          >
             分配权限
           </el-button>
           <el-button
@@ -52,7 +57,12 @@
           >
             编辑
           </el-button>
-          <el-button type="primary" @click="" icon="Delete" size="small">
+          <el-button
+            type="primary"
+            @click="delete_role(row)"
+            icon="Delete"
+            size="small"
+          >
             删除
           </el-button>
         </template>
@@ -90,11 +100,35 @@
       </el-form-item>
     </el-form>
   </el-dialog>
+
+  <!-- 权限管理菜单栏 -->
+  <el-drawer
+    title="权限管理"
+    direction="rtl"
+    show-close
+    v-model="assign_menu_drawer"
+  >
+    <el-tree
+      :data="menu_data"
+      :props="menu_props"
+      node-key="id"
+      default-expand-all
+      show-checkbox
+      :default-checked-keys="selected_data_id"
+      @check="handle_tree_check"
+    ></el-tree>
+  </el-drawer>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted, reactive, watch, nextTick } from 'vue'
-import { api_get_has_role, api_add_or_edit_role } from '@/api/acl/roles'
+import {
+  api_get_has_role,
+  api_add_or_edit_role,
+  api_get_assigned_menu,
+  api_do_assign_acl,
+  api_delete_role,
+} from '@/api/acl/roles'
 import { ElMessage } from 'element-plus'
 // 分页器相关
 // 定义分页器的页码
@@ -185,5 +219,74 @@ const reset_search_form = () => {
   search_form.value = ''
   page_num.value = 1
   get_has_role()
+}
+
+// 为已有的角色赋予权限
+// 控制权限菜单打开/关闭
+const assign_menu_drawer = ref(false)
+// 初始化菜单展示的内容
+const menu_data = ref([])
+const menu_props = {
+  children: 'children',
+  label: 'name',
+}
+// 定义一个新数组,递归遍历原有的数组,将最底层的值是否选中的返回出来
+// TODO此处最深层是写死的,可以做个判断判断为最深层的数
+let selected_data_id = ref([])
+const filter_seleted_role = (menu_data) => {
+  menu_data.forEach((item) => {
+    if (item.children && item.children.length > 1) {
+      filter_seleted_role(item.children)
+    } else {
+      if (item.select && item.level === 4) {
+        selected_data_id.value.push(item.id)
+      }
+    }
+  })
+}
+
+// 初始化赋予权限请求的参数
+let do_assign_role_parmas = reactive({
+  permissionIdList: [],
+  roleId: 0,
+})
+const handle_tree_check = async (_, parmas2) => {
+  // 对数据进行处理
+  do_assign_role_parmas.permissionIdList = parmas2.checkedKeys.concat(
+    parmas2.halfCheckedKeys,
+  )
+  // 发送请求
+  let res = await api_do_assign_acl(do_assign_role_parmas)
+  if (res.code === 200) {
+    ElMessage({
+      type: 'success',
+      message: '修改成功',
+    })
+  }
+}
+const assign_role_menu = async (row) => {
+  assign_menu_drawer.value = true
+  // 给修改请求对象赋值当前行的id
+  do_assign_role_parmas.roleId = row.id
+  // 清空原来的数据
+  menu_data.value.length = 0
+  do_assign_role_parmas.permissionIdList.length = 0
+
+  // 发送请求
+  let res = await api_get_assigned_menu(row.id)
+  menu_data.value = res.data
+  filter_seleted_role(menu_data.value)
+}
+
+// 删除角色
+const delete_role = async (row) => {
+  let res = await api_delete_role(row.id)
+  if (res.code == 200) {
+    ElMessage({
+      type: 'success',
+      message: '删除成功',
+    })
+    get_has_role()
+  }
 }
 </script>

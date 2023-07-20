@@ -17,7 +17,27 @@ import { Expand } from '@element-plus/icons-vue/dist/types';
     :circle="true"
     @click="full_screen"
   ></el-button>
-  <el-button size="small" icon="Setting" :circle="true"></el-button>
+  <!-- 设置菜单弹出框 -->
+  <el-popover placement="top-start" title="设置" :width="300" trigger="hover">
+    <template #reference>
+      <el-button size="small" icon="Setting" :circle="true"></el-button>
+    </template>
+
+    <template #default>
+      <el-form ref="form">
+        <el-form-item label="黑夜模式">
+          <el-switch
+            v-model="darkmode_value"
+            inline-prompt
+            inactive-icon="Sunny"
+            active-icon="Moon"
+            @change="change_dark_mode"
+          ></el-switch>
+        </el-form-item>
+      </el-form>
+    </template>
+  </el-popover>
+
   <el-avatar
     size="small"
     :src="user_store.user_avatar_url"
@@ -45,6 +65,7 @@ export default {
 }
 </script>
 <script lang="ts" setup>
+import { ref } from 'vue'
 // 获取骨架的小仓库
 import use_layout_setting_store from '@/store/modules/setting'
 // 获取用户相应的数据,应用到用户头像和名称
@@ -78,5 +99,15 @@ const full_screen = () => {
 const logout = async () => {
   await user_store.user_logout()
   $router.push({ path: '/login', query: { redirect: $route.path } })
+}
+
+// 黑夜模式设置
+let darkmode_value = ref(false)
+const change_dark_mode = () => {
+  let html = document.documentElement
+  darkmode_value.value
+    ? html.classList.add('dark')
+    : html.classList.remove('dark')
+  console.log(html)
 }
 </script>

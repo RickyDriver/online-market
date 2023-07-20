@@ -3,6 +3,7 @@ import App from './App.vue'
 // 引用elementplus插件和样式
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
+import 'element-plus/theme-chalk/dark/css-vars.css'
 
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 
