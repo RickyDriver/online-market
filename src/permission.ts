@@ -33,7 +33,7 @@ router.beforeEach(async (to: any, from: any, next: any) => {
         // 如果没有用户信息,在守卫处发请求获取用户信息
         try {
           await user_store.user_info()
-          next()
+          next({ ...to, replace: true })
         } catch (err) {
           // token过期或者用户手动地修改了本地的token
           await user_store.user_logout()

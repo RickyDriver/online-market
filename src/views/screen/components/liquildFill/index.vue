@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <div class="title">实时游客统计</div>
+    <BgTitle :title="'预约数量'"></BgTitle>
     <div class="sum-people">
       <p>
         可预约总量
@@ -19,6 +19,7 @@
 </template>
 
 <script lang="ts" setup>
+import BgTitle from '../bgTitle/index.vue'
 import { ref, onMounted } from 'vue'
 let number_title = ref('216908')
 
@@ -78,6 +79,7 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .main {
+  margin-top: 30px;
   display: flex;
   flex-flow: column nowrap;
 
@@ -86,19 +88,7 @@ onMounted(() => {
   background-size: cover;
   background-repeat: no-repeat;
 }
-.title {
-  font-size: 20px;
-  &::after {
-    content: '';
-    display: block;
-    margin-top: 10px;
-    width: 50px;
-    height: 5px;
-    background-image: url(../../images/dataScreen-title.png);
-    background-size: contain;
-    background-repeat: no-repeat;
-  }
-}
+
 .sum-people {
   margin-right: 10px;
   align-self: flex-end;

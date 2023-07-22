@@ -34,27 +34,6 @@ export const constant_route = [
     ],
   },
 
-  // 404
-  {
-    path: '/404',
-    component: () => import('@/views/404/index.vue'),
-    name: '404',
-    meta: {
-      title: '404',
-      hidden: true,
-    },
-  },
-  // 没匹配到返回的路由
-  {
-    path: '/:pathMatch(.*)*',
-    redirect: '/404',
-    name: 'Any',
-    meta: {
-      title: '任意路由',
-      hidden: true,
-    },
-  },
-
   // 数据大屏路由
   {
     path: '/screen',
@@ -66,7 +45,8 @@ export const constant_route = [
       icon: 'DataAnalysis',
     },
   },
-
+]
+export const async_route = [
   // 权限管理路由
   {
     path: '/acl',
@@ -162,5 +142,28 @@ export const constant_route = [
         },
       },
     ],
+  },
+]
+
+export const any_route = [
+  // 404
+  {
+    path: '/404',
+    component: () => import('@/views/404/index.vue'),
+    name: '404',
+    meta: {
+      title: '404',
+      hidden: true,
+    },
+  },
+  // 没匹配到返回的路由
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/404',
+    name: 'Any',
+    meta: {
+      title: '任意路由',
+      hidden: true,
+    },
   },
 ]

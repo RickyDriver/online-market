@@ -9,13 +9,17 @@ import type {
   user_info_response_data,
 } from '@/api/user/type.ts'
 //引入路由(常量路由)
-import { constant_route } from '@/router/routes'
+import { constant_route, async_route, any_route } from '@/router/routes'
 
 // 引入小仓库的数据类型
 import type { UserState } from './type/type.ts'
 
 // 引入utils里的存取token方法
 import { GET_TOKEN, SET_TOKEN, REMOVE_TOKEN } from '@/utils/token.ts'
+// 引入lodash深拷贝方法
+import colneDeep from 'lodash/cloneDeep'
+
+import router from '@/router/index.ts'
 
 // 创建用户小仓库
 const use_user_store = defineStore('User', {
@@ -25,9 +29,11 @@ const use_user_store = defineStore('User', {
       // 存储用户的唯一标识token
       token: GET_TOKEN(),
       // 常量路由
-      menu_routes: constant_route,
       user_name: '',
       user_avatar_url: '',
+      comfirmed_async_routes: [],
+      menu_routes: [],
+      botton: [],
     }
   },
   // 异步，逻辑的地方
@@ -48,14 +54,43 @@ const use_user_store = defineStore('User', {
         return Promise.reject(new Error(result.data))
       }
     },
-
+    // 递归过滤路由权限
+    fliter_async_routes(async_routes, permission_routes: string[]) {
+      return async_routes.filter((item: any) => {
+        if (permission_routes.includes(item.name)) {
+          if (item.children && item.children.length > 0) {
+            item.children = this.fliter_async_routes(
+              item.children,
+              permission_routes,
+            )
+          }
+          return true
+        }
+      })
+    },
     // 获取用户信息的方法
     async user_info() {
       // 获取用户的的信息,存储与仓库之中[用户的头像\名字\权限]
       const result: user_info_response_data = await api_req_userInfo()
       if (result.code == 200) {
+        console.log(result)
         this.user_name = result.data.name
         this.user_avatar_url = result.data.avatar
+        this.comfirmed_async_routes = this.fliter_async_routes(
+          colneDeep(async_route),
+          result.data.routes,
+        )
+        this.menu_routes = [
+          ...constant_route,
+          ...this.comfirmed_async_routes,
+          ...any_route,
+        ]
+
+        this.comfirmed_async_routes.forEach((item) => {
+          router.addRoute(item)
+        })
+
+        this.botton = result.data.bottons
         return 'ok'
       } else {
         return Promise.reject(new Error(result.message))

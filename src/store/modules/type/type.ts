@@ -15,6 +15,8 @@ export interface UserState {
   menu_routes: RouteRecordRaw[]
   user_name: string
   user_avatar_url: string
+  comfirmed_async_routes?: any
+  botton: any
 }
 // 定义分类对象仓库的state数据类型
 export interface catagory_state {

@@ -25,9 +25,12 @@ import pinia from '@/store'
 // 引入路由鉴权文件
 import './permission'
 
+// 引入自定义指令
+import { is_able_button } from '@/directive/button'
 createApp(App)
 
 const app = createApp(App)
+is_able_button(app)
 // 安装element-plus插件
 app.use(ElementPlus, {
   locale: zhCn, //elementplus国际化设置
